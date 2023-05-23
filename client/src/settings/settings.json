@@ -1,0 +1,30 @@
+{
+    "golf": {
+        "occupancy": {
+            "choices": [{"2": 2}, {"3": 3}, {"4": 4}],
+            "default": "4"
+        },
+        "deck": {
+            "choices": [{"single": "single"}, {"double": "double"}],
+            "default": "double"
+        },
+        "cardTheme": {
+            "choices": [
+                {"default": "default"},
+                {"3D": "3D: Plastic"},
+                {"DK": "Dark Set: Black+Red"},
+                {"DG": "Dark Set: Black+Gold"},
+                {"GLD": "Trump Set: Plated Gold"}
+            ],
+            "default": "default"
+        },
+        "scorelimit":{
+            "choices": [
+                {"50": "50"},
+                {"80": "80"},
+                {"100": "100"}
+            ],
+            "default": "100"
+        } 
+    }
+}
