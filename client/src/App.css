@@ -439,7 +439,7 @@ a.sitename, a:visited.sitename {
 .player2{
   position: absolute;
   top: 0;
-  right: 30px;
+  right: 60px;
 }
 
 .player3{
@@ -451,14 +451,14 @@ a.sitename, a:visited.sitename {
 .player4{
   position: absolute;
   bottom: 25px;
-  right: 30px;
+  right: 60px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3,20px);  /* 3 columns */
   grid-template-rows: repeat(3,20px); /* 3 rows  */
-  grid-gap:50px 30px; /* 50 pixels of space added between rows and 30 pixels added between columns  */
+  grid-gap:75px 45px;
 }
 
 .playerCards:hover, .center > img:hover {
@@ -625,11 +625,15 @@ tr:nth-child(even){background-color: #f2f2f2}
 	animation-duration: 0.4s
   }
   /* CARD ANIMS */
+  .playingCards{
+    width: 60px;
+    height: 90px;
+  }
 
   .flip-card {
     background-color: transparent;
-    width: 45px;
-    height: 65px;
+    width: 60px;
+    height: 90px;
     perspective: 1000px;
   }
   
@@ -698,16 +702,15 @@ tr:nth-child(even){background-color: #f2f2f2}
   @-webkit-keyframes zoom {
     from {} 
     to { 
-      height: 75px;
-      width: 55px;
+      transform: scale(1.2);
+
     }
   }
 
   @keyframes zoom {
     from {} 
     to { 
-      height: 75px;
-      width: 55px;
+      transform: scale(1.2);
     }
   }
 
@@ -802,6 +805,14 @@ tr:nth-child(even){background-color: #f2f2f2}
     }
   
   }
+  @media screen and (max-width: 1200px) {
+    .column-9{
+      width: 60%;
+    }
+    .column-3{
+      width: 40%;
+    }
+  }
 
   @media screen and (max-width: 920px) {
     [class*="column-"] {
@@ -818,6 +829,29 @@ tr:nth-child(even){background-color: #f2f2f2}
 
     .gameForm{
       padding: 0;
+    }
+    
+    .playingCards{
+      width: 45px;
+      height: 65px;
+    }
+
+    .flip-card {
+      width: 45px;
+      height: 65px;
+    }
+    
+
+    .grid {
+      grid-gap:50px 30px;
+    }
+
+    .player2{
+      right: 5px;
+    }
+
+    .player4{
+      right: 5px;
     }
   }
 

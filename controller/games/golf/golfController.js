@@ -138,7 +138,7 @@ module.exports.getState = async (req, res) => {
                 clearInterval(countdown[req.params.id]);
                 delete countdown[req.params.id];
             }
-            res.status(200).json({messages: game.messages, theme: game.settings.cardTheme, ...game.state});
+            res.status(200).json({messages: game.messages, theme: game.settings.cardTheme, pointLimits: game.settings.scorelimit, ...game.state});
         }else{
             res.status(500).json({error: 'room not found...'});
         }
@@ -357,6 +357,17 @@ module.exports.removePlayer = async (req, res) => {
                     players[new_pid].canSelect = true;
                     state.currentTurn = new_pid;
                     state.players = players;
+                    let canJoin = true
+                    //check the point differentiate from the maximum points from the player who is currently losing. If the differentiate is under 20, 
+                    //the game is too close to end and nobody can freshly join for a cheeky victory
+                    var pointLimits = parseInt(game.settings.scorelimit);
+                    var total_points = Object.values(players).map((data)=>{return data.total});
+                    var max_points = Math.max(...total_points)
+                    var diff = pointLimits - max_points
+                    if(diff < 30 && !state.gameover){
+                        canJoin = false
+                    }
+                    state.canJoin = canJoin
                     let target = {rid: req.params.id};
                     let updater = {$push: {messages: msg}, state: state};
 

@@ -29,8 +29,11 @@ const Golf = ({uid}) =>{
     let[theme, setTheme] = useState("default");
     let[cardSlide, setcardSlide] = useState(false);
     let[canFlip, setCanFlip] = useState(true);
+    let[scoreLimit, setScoreLimit] = useState(0);
 
     const burntRef = useRef()
+    const messagesRef = useRef()
+
 
     React.useEffect(() => {
         socket.emit('joinGame', `/game/golf/${roomID}`);
@@ -86,7 +89,12 @@ const Golf = ({uid}) =>{
     }, [])
 
     React.useEffect(() => {
-        scrollToBottom()
+        if(messagesRef.current?.length || 0 < messages.length){
+            console.log("SCROLLING")
+            scrollToBottom()
+
+        }
+        messagesRef.current = messages
     }, [messages])
 
     let getState = async () =>{
@@ -98,8 +106,14 @@ const Golf = ({uid}) =>{
             setTurn(resp.data.currentTurn);
             setWinners(resp.data.winners);
             setTheme(resp.data.theme)
+            setScoreLimit(resp.data.pointLimits)
 
-            if(resp.data.messages.length > messages.length){
+            // console.log("NEW MSG", resp.data.messages.length)
+            // console.log("OLD MSG", messages.length)
+            // console.log("MSG REF", messagesRef.current.length)
+
+            if(resp.data.messages.length > messagesRef.current.length){
+                console.log("HERE")
                 setMessages(resp.data.messages)
             }
             if(Object.keys(resp.data.players).length >= 2){
@@ -244,8 +258,8 @@ const Golf = ({uid}) =>{
     }
 
     let scrollToBottom = () => {
-        if(messagesEndRef.current && window.innerWidth > 920){
-            messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+        if(messagesEndRef.current){
+            messagesEndRef.current.parentElement.scrollTo({top: messagesEndRef.current.offsetTop, behavior: 'smooth'});
         }
     }
 
@@ -270,15 +284,15 @@ const Golf = ({uid}) =>{
                         (             
                             canFlip?
                                 <ReactCardFlip isFlipped={card.flipped} flipDirection="horizontal" key={index}>
-                                    <img className="playerCards" id={index} src={require(`../../../cards/standard52/${theme}/x.png`)} width="45vw" height="65vh" onClick={(e) => play(e, data.uid)}></img>
-                                    <img className="playerCards" id={index} src={require(`../../../cards/standard52/${theme}/${card.picture}.png`)} width="45vw" height="65vh" onClick={(e) => play(e, data.uid)}></img>
+                                    <img className="playerCards playingCards" id={index} src={require(`../../../cards/standard52/${theme}/x.png`)} onClick={(e) => play(e, data.uid)}></img>
+                                    <img className="playerCards playingCards" id={index} src={require(`../../../cards/standard52/${theme}/${card.picture}.png`)} onClick={(e) => play(e, data.uid)}></img>
                                 </ReactCardFlip>
                             :
                             <div key={index}>
                                 {card.flipped?
-                                    <img className="playerCards" id={index} src={require(`../../../cards/standard52/${theme}/${card.picture}.png`)} width="45vw" height="65vh" onClick={(e) => play(e, data.uid)}></img>
+                                    <img className="playerCards playingCards" id={index} src={require(`../../../cards/standard52/${theme}/${card.picture}.png`)} onClick={(e) => play(e, data.uid)}></img>
                                 :
-                                    <img className="playerCards" id={index} src={require(`../../../cards/standard52/${theme}/x.png`)} width="45vw" height="65vh" onClick={(e) => play(e, data.uid)}></img>
+                                    <img className="playerCards playingCards" id={index} src={require(`../../../cards/standard52/${theme}/x.png`)} onClick={(e) => play(e, data.uid)}></img>
                                 }
                             </div>
                         )
@@ -293,7 +307,7 @@ const Golf = ({uid}) =>{
                         <br></br>
                         <span>{data.score} points</span>
                         <br></br>
-                        <span>{data.total} total</span>            
+                        <span><b>{data.total}</b> / {scoreLimit} total</span>            
                     </div>
                 </div>    
             </div>   
@@ -316,7 +330,7 @@ const Golf = ({uid}) =>{
         <div className="mainPage">
             {/* <h1 style={{padding: '0 25px 0 25px'}}>6 Cards Golf </h1> */}
             <div className="row">
-                <div className = "column-8" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
+                <div className = "column-9" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
                     <span style={{padding: '0 5px 0 5px', color: (time < 5? 'red' : 'white'), fontWeight: 'bold', fontSize: '32px', display: 'block'}}>{secondsToTime(time)}</span>
                     {!startgame && <span style={{padding: '0 5px 0 5px', fontWeight: 500, fontSize: '24px', color: 'white'}}>Waiting for players to join....</span>}
                     {winners ?
@@ -353,7 +367,7 @@ const Golf = ({uid}) =>{
                     }
                     
                 </div>
-                <div className="column-8" style={{position: 'relative', height: '750px', background: '#004e37', color: 'white'}}>
+                <div className="column-9" style={{position: 'relative', height: '750px', background: '#004e37', color: 'white'}}>
                     <div className="gameContainer">
                         {renderPlayers}
                         <div className={`center ${(turn !== uid || !startgame) && 'disabled'}`}>
@@ -364,29 +378,29 @@ const Golf = ({uid}) =>{
                             <br></br>
                             {/* <span>{JSON.stringify(burntRef.current)}</span> */}
                             <div style={{display: 'flex', flexDirection: 'row'}}>
-                                <img src={require(`../../../cards/standard52/${theme}/x.png`)} width="45" height="65" onClick={()=>{draw(uid)}}></img>
+                                <img className="playingCards" src={require(`../../../cards/standard52/${theme}/x.png`)} onClick={()=>{draw(uid)}}></img>
                                 {(state.burntPile) ?
                                     (state.burntPile.length > 0?
                                         <>  
                                             {burntRef.current &&
                                                 <div style={{position: 'fixed', left: '45px', zIndex: -1}}>
-                                                    <img src={require(`../../../cards/standard52/${theme}/${burntRef.current.picture}.png`)} width="45vw" height="65vh"></img>
+                                                    <img className="playingCards" src={require(`../../../cards/standard52/${theme}/${burntRef.current.picture}.png`)}></img>
                                                 </div>
                                             }
                                         {cardSlide? 
                                             <div className="flip-card" style={{zIndex: 3}}>
                                                 <div className={`flip-card-inner slideAndflip`} onAnimationEnd={()=>{setcardSlide(false)}}>
                                                     <div className="flip-card-front">
-                                                        <img src={require(`../../../cards/standard52/${theme}/x.png`)} width="45" height="65"></img>
+                                                        <img className="playingCards" src={require(`../../../cards/standard52/${theme}/x.png`)}></img>
                                                     </div>
                                                     <div className="flip-card-back">
-                                                        <img src={require(`../../../cards/standard52/${theme}/${state.burntPile[state.burntPile.length-1].picture}.png`)} width="45vw" height="65vh" onClick={select}></img>
+                                                        <img className="playingCards" src={require(`../../../cards/standard52/${theme}/${state.burntPile[state.burntPile.length-1].picture}.png`)} onClick={select}></img>
                                                     </div>
                                                 </div>
                                             </div>
                                             :
                                             <div style={{zIndex: 2}}>
-                                                <img className={`${selected? 'zoom' : ''}`} src={require(`../../../cards/standard52/${theme}/${state.burntPile[state.burntPile.length-1].picture}.png`)} width="45vw" height="65vh" onClick={select}></img>
+                                                <img className={`${selected? 'zoom' : ''} playingCards`} src={require(`../../../cards/standard52/${theme}/${state.burntPile[state.burntPile.length-1].picture}.png`)} onClick={select}></img>
                                             </div>
                                         }
                                         </>
@@ -404,7 +418,7 @@ const Golf = ({uid}) =>{
                     </div>
                 </div>
                 <div className="column-3 chat" style={{border: '1px solid black', display: 'flex'}}>
-                    <div className="chat_messages">
+                    <div className="chat_messages" >
                         {renderMessages}
                         <div ref={messagesEndRef} />
                     </div>
