@@ -383,7 +383,7 @@ const Golf = ({uid}) =>{
                                     (state.burntPile.length > 0?
                                         <>  
                                             {burntRef.current &&
-                                                <div style={{position: 'fixed', left: '45px', zIndex: -1}}>
+                                                <div className="pileStack" style={{position: 'fixed', zIndex: -1}}>
                                                     <img className="playingCards" src={require(`../../../cards/standard52/${theme}/${burntRef.current.picture}.png`)}></img>
                                                 </div>
                                             }

@@ -646,6 +646,10 @@ tr:nth-child(even){background-color: #f2f2f2}
     transform-style: preserve-3d;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   }
+
+  .pileStack{
+    left: 60px;
+  }
   
   /* .flip-card:hover .flip-card-inner {
     transform: rotateY(180deg);
@@ -725,12 +729,12 @@ tr:nth-child(even){background-color: #f2f2f2}
   }
 
   @-webkit-keyframes slideRight {
-    from {left:-45px;} 
+    from {left:-60px;} 
     to {left:0; transform: rotateY(180deg);}
   }
 
   @keyframes slideRight {
-    from {left:-45px;} 
+    from {left:-60px;} 
     to {left:0; transform: rotateY(180deg);}
   }
 
@@ -852,6 +856,20 @@ tr:nth-child(even){background-color: #f2f2f2}
 
     .player4{
       right: 5px;
+    }
+
+    .pileStack{
+      left: 45px;
+    }
+
+    @-webkit-keyframes slideRight {
+      from {left:-45px;} 
+      to {left:0; transform: rotateY(180deg);}
+    }
+  
+    @keyframes slideRight {
+      from {left:-45px;} 
+      to {left:0; transform: rotateY(180deg);}
     }
   }
 
