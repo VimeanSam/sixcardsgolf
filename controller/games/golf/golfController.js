@@ -32,7 +32,7 @@ module.exports.createRoom = async (req, res) => {
             let burnt = GameEngine.draw(deck, 1, '', true);
 
             //things to insert in db
-            var state = {canJoin: true, endgame: false, roundover: false, gameover: false, burntPile: burnt, deck: deck, players: players, currentTurn: Object.keys(players)[0], winners: ""}
+            var state = {canJoin: true, endgame: false, roundover: false, gameover: false, burntPile: burnt, deck: deck, players: players, currentTurn: Object.keys(players)[0], winners: "", startIndex: 0}
             var toInsert = {
                 rid: roomID,
                 name: roomname, 
@@ -110,7 +110,7 @@ module.exports.getState = async (req, res) => {
         const game = await Game.findOne({rid: req.params.id});
         const io = req.app.get('io');
         const endpoint = `/game/golf/${req.params.id}`;
-        let currentTime = (!time[req.params.id]? 120: time[req.params.id]);
+        let currentTime = (!time[req.params.id]? conf.timer: time[req.params.id]);
         if(game){
             let players = game.state.players;
             let currentTurn = game.state.currentTurn;
@@ -199,14 +199,14 @@ module.exports.getWinner = async (req, res) => {
             let str = names.join(', ');
             state.winners = str; 
             state.players = GameEngine.calculateTotal(players);
-            let canJoin = true
             //check the point differentiate from the maximum points from the player who is currently losing. If the differentiate is under 20, 
             //the game is too close to end and nobody can freshly join for a cheeky victory
+            let canJoin = true
             var pointLimits = parseInt(game.settings.scorelimit);
             var total_points = Object.values(players).map((data)=>{return data.total});
             var max_points = Math.max(...total_points)
             var diff = pointLimits - max_points
-            if(diff < 30){
+            if(diff < 30 && Object.keys(players).length > 1){
                 canJoin = false
             }
             if(max_points >= pointLimits){
@@ -244,6 +244,7 @@ module.exports.getWinner = async (req, res) => {
             }
             res.status(200).json({status: 'ok', winners: str});
             clearInterval(countdown[req.params.id]);
+            delete countdown[req.params.id];
             io.of('/game').to(endpoint).emit('UPDATE_STATE', {event: evt});
             io.of('/lobby').emit('LIST_ROOMS'); 
         }else{
@@ -290,8 +291,12 @@ module.exports.rematch = async (req, res) => {
                     players[key].last_active = Date.now();
                 }
             }
-            var state = {canJoin: game.state.canJoin, endgame: false, roundover: false, gameover: false, burntPile: burnt, deck: deck, players: players, currentTurn: Object.keys(players)[0], winners: ""}
+            //rotate starting player
+            let current_starting_idx = game.state.startIndex
+            let next_starting_idx = nextTurn(current_starting_idx+1, players, false)
+            var state = {canJoin: game.state.canJoin, endgame: false, roundover: false, gameover: false, burntPile: burnt, deck: deck, players: players, currentTurn: Object.keys(players)[next_starting_idx], winners: "", startIndex: next_starting_idx}
             time[req.params.id] = conf.timer;
+            clearInterval(countdown[req.params.id]);
             delete countdown[req.params.id];
             let target = {rid: req.params.id};
             let updater = {state: state};
@@ -364,7 +369,7 @@ module.exports.removePlayer = async (req, res) => {
                     var total_points = Object.values(players).map((data)=>{return data.total});
                     var max_points = Math.max(...total_points)
                     var diff = pointLimits - max_points
-                    if(diff < 30 && !state.gameover){
+                    if(diff < 30 && !state.gameover && Object.keys(players).length > 1){
                         canJoin = false
                     }
                     state.canJoin = canJoin

@@ -679,9 +679,11 @@ tr:nth-child(even){background-color: #f2f2f2}
     animation-name: slideRight;
     animation-duration: 0.4s;  
     animation-fill-mode: both;
+    animation-delay: 0.5s;
     -webkit-animation-name: slideRight;
 	  -webkit-animation-duration: 0.4s;
     -webkit-animation-fill-mode: both;
+    -webkit-animation-delay: 0.5s;
   }
 
   .zoom{
