@@ -189,8 +189,8 @@ module.exports.getWinner = async (req, res) => {
         const io = req.app.get('io');
         const endpoint = `/game/golf/${req.params.id}`;
         const game = await Game.findOne({rid: req.params.id});
-        let state = game.state;
         if(game){
+            let state = game.state;
             //get winners and check to see if any players exceed the maximum points
             let evt = 'ROUND_OVER';
             let players = game.state.players;
@@ -221,6 +221,10 @@ module.exports.getWinner = async (req, res) => {
                 canJoin = true
             }
             state.canJoin = canJoin
+            //rotate starting player
+            let current_starting_idx = state.startIndex
+            let next_starting_idx = nextTurn(current_starting_idx+1, players, false)
+            state.startIndex = next_starting_idx
             let target = {rid: req.params.id};
             let updater = {state: state};
             await Game.updateOne(target, updater).exec();
@@ -293,8 +297,7 @@ module.exports.rematch = async (req, res) => {
             }
             //rotate starting player
             let current_starting_idx = game.state.startIndex
-            let next_starting_idx = nextTurn(current_starting_idx+1, players, false)
-            var state = {canJoin: game.state.canJoin, endgame: false, roundover: false, gameover: false, burntPile: burnt, deck: deck, players: players, currentTurn: Object.keys(players)[next_starting_idx], winners: "", startIndex: next_starting_idx}
+            var state = {canJoin: game.state.canJoin, endgame: false, roundover: false, gameover: false, burntPile: burnt, deck: deck, players: players, currentTurn: Object.keys(players)[current_starting_idx], winners: "", startIndex: current_starting_idx}
             time[req.params.id] = conf.timer;
             clearInterval(countdown[req.params.id]);
             delete countdown[req.params.id];

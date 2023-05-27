@@ -2,7 +2,7 @@ const Game = require('../../../models/game.js');
 
 module.exports.listRooms = async (req, res) => {
     try{
-        let games = await Game.find({});
+        let games = await Game.find({}).sort({ date: -1 })
         //console.log(games);
         res.status(200).json(games);
     }catch(error){

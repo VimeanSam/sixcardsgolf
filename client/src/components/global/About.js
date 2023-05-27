@@ -47,7 +47,7 @@ const About = () =>{
                 <li>2-10: <b>Their numerical Value</b></li>
                 <li>Jacks, Queens: <b>10 points</b></li>
               </ul>
-              <p>A pair of equal cards in the same column scores <b>0 points</b> for the column regardless of the suit (even if the equal cards are Jokers).</p>
+              <p>A pair of equal cards in the same column scores <b>0 points</b> regardless of the suit (even if the equal cards are Jokers).</p>
               <p><b>SPECIAL: </b> In a double deck play, it is possible to have 2 or more columns of equal cards. In this rare scenario, the 2 equal columns are worth <b>-20 points</b>.
               and if a playe somehow has all columns of the same cards, <b>-50 points</b> will be deducted from the player's total point which will swing the matchup in the player's favor and 
               potentially guarantee a victory. 
