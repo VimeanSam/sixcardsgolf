@@ -5,10 +5,9 @@ const About = () =>{
         <div className="mainPage fade-in" style={{color: 'white'}}>  
             <h1 style={{marginLeft: '25px'}}>About</h1>
             <div style={{marginLeft: '25px', marginRight: '25px'}}>
-                <p> This is a web clone of 6 cards Golf. This code base was refactored, renewed and improved from my CSC 667 Internet Application Design and Development and CSC 648 Software Engineering course from SFSU. 
-                  Node.js, Express, MongoDB, CSS, and React.js are the frameworks used to programmed this project. 
+                <p> This is a web clone of 6 cards Golf. Node.js, Express, MongoDB, CSS, and React.js are the frameworks used to programmed this project. 
                   JavaScript libraries such as Bcrypt for passwords, axios for transfering client-server data, and socket.io for 
-                  real-time player actions. Supported browsers include Google Chrome, Safari, Edge, and Firefox. 
+                  real-time player actions. The website is deployed on AWS EC2 with NGINX configuration. Supported browsers include Google Chrome, Safari, Edge, and Firefox. 
                 </p>
             </div>     
             <h2 style={{marginLeft: '25px'}}>How to play</h2>  
