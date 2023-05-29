@@ -80,7 +80,10 @@ module.exports.joinRoom = async (req, res) => {
                         players[currentTurn].last_active = Date.now();
                     }
                     let playerHand = GameEngine.draw(roomDeck, 6, '', true);
-                    players[uid] = GameEngine.newPlayer(uid, user.username, user.avatar, true, true, true, playerHand, 0, 0, Date.now());
+                    //punish the player by having them take on the highest points in the room by joining late
+                    var total_points = Object.values(players).map((data)=>{return data.total});
+                    var max_points = Math.max(...total_points) || 0
+                    players[uid] = GameEngine.newPlayer(uid, user.username, user.avatar, true, true, true, playerHand, max_points, max_points, Date.now());
                     state.players = players;
                     state.deck = roomDeck;
                     var msg = {_id: 'BOT', from: "server", avatar: "bot.jpg", text: `${user.username} has joined the game.`, color: 'black', timestamp: Date.now()};
@@ -387,11 +390,11 @@ module.exports.removePlayer = async (req, res) => {
                         }
                     }
                     await Game.updateOne(target, updater).exec();
-                    res.status(200).json({status: 'ok', roundover: state.roundover});
                 }
                 //clear timer interval
                 //timer(req.params.id, io, false);
                 //emit sockets
+                res.status(200).json({status: 'ok', roundover: state.roundover});
                 io.of('/lobby').emit('LIST_ROOMS'); 
                 io.of('/game').to(endpoint).emit('UPDATE_STATE', {event: 'USER_REMOVED', uid: pid, flag: flag});
             }else{

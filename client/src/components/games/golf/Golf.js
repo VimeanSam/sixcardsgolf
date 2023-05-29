@@ -1,4 +1,5 @@
 import React, { useReducer, useState, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import io from 'socket.io-client';
 import '../../../App.css'
@@ -30,9 +31,11 @@ const Golf = ({uid}) =>{
     let[cardSlide, setcardSlide] = useState(false);
     let[canFlip, setCanFlip] = useState(true);
     let[scoreLimit, setScoreLimit] = useState(0);
+    let[turnName, setTurnName] = useState("");
 
     const burntRef = useRef()
     const messagesRef = useRef()
+    const navigate = useNavigate();
 
 
     React.useEffect(() => {
@@ -46,7 +49,8 @@ const Golf = ({uid}) =>{
                     if(data.flag === "TIMEOUT"){
                         alert("you have been removed for taking too long");
                     }
-                    window.location.href = "/lobby";
+                    // window.location.href = "/lobby";
+                    navigate('/lobby')
                 }
             }
             //animate drawn card
@@ -361,9 +365,17 @@ const Golf = ({uid}) =>{
                             </div>
                         )
                         :
-                        <div>
-                            <button className="btnSmall button redButton" onClick={leave} style={{marginLeft: '5px'}}>Leave Game</button>
-                        </div>
+                        <>
+                            <div>
+                                <button className="btnSmall button redButton" onClick={leave} style={{marginLeft: '5px'}}>Leave Game</button>
+                            </div>
+                            <div>
+                                {(players[state.currentTurn]) &&
+                                    <b style={{fontSize: '18px', color: 'yellow'}}>{players[state.currentTurn].username}'s turn</b>
+                                }
+                            </div>
+                        </>
+                       
                     }
                     
                 </div>

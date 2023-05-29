@@ -15,7 +15,7 @@ const About = () =>{
             <h3 style={{marginLeft: '25px'}}>The Website</h3>  
             <div style={{marginLeft: '25px', marginRight: '25px'}}>
                 <p> Players can create a lobby with up to 4 players and have the option for the game to end at 50, 80, and 100 points. Players can also join live games where
-                    another player's total points isn't close enough to the final score limit {'(more than 30 points away from the limit)'}. In a live game, players have 1 minute and
+                    another player's total points isn't close enough to the final score limit {'(more than 30 points away from the limit)'} but they will have to take on the current highest point that another player has. In a live game, players have 1 minute and
                     30 seconds to make a play otherwise they will get disconnected for idling too long. 
                 </p>
             </div>  
